@@ -27,6 +27,8 @@ SECRET_KEY = 'django-insecure-#y^362p^ib)ag$)fldk2u%x-bf_p+o$zqqs*ij=95(6!p277pk
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Application definition
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'camerapp'
 ]
 
 MIDDLEWARE = [

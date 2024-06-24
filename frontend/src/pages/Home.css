@@ -1,0 +1,7 @@
+h1 {
+	color: #0a0000;
+	text-decoration: none;
+}
+h1:hover {
+	text-decoration: underline;
+}
