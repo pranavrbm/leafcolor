@@ -18,16 +18,12 @@ const App = () => {
 						element={<Home />}
 					/>
 					<Route
-						path="/Profile"
+						path="/Home"
+						element={<Home />}
+					/>
+					<Route
+						path="/Base"
 						element={<Profile />}
-					/>
-					<Route
-						path="/Calibration"
-						element={<Calibration />}
-					/>
-					<Route
-						path="/Camera"
-						element={<Camera />}
 					/>
 				</Routes>
 			</div>
