@@ -79,6 +79,8 @@ class ProcessImageView(APIView):
 
                 logger.debug(f"Processed {len(cropped_images)} cropped images")
 
+                comparison_results = []
+
                 if selected_leaf_index is not None and 0 <= selected_leaf_index < len(cropped_images):
                     leaf_hsv = average_hsvs[selected_leaf_index]
                     min_distance = float('inf')
@@ -87,9 +89,19 @@ class ProcessImageView(APIView):
                     for i, avg_hsv in enumerate(average_hsvs):
                         if i != selected_leaf_index:
                             distance = euclidean(leaf_hsv, avg_hsv)
+                            similarity = 100 - (distance / np.sqrt(sum([x**2 for x in leaf_hsv])) * 100)
+                            comparison_results.append({
+                                "index": i,
+                                "similarity": round(similarity, 2),
+                                "average_hsv": avg_hsv,
+                                "bounding_box": bounding_boxes[i],
+                                "image": cropped_images[i]
+                            })
                             if distance < min_distance:
                                 min_distance = distance
                                 most_similar_index = i
+
+                    comparison_results.sort(key=lambda x: x['similarity'], reverse=True)
 
                     if most_similar_index != -1:
                         result_data = {
@@ -97,17 +109,20 @@ class ProcessImageView(APIView):
                             "most_similar_index": most_similar_index,
                             "most_similar_hsv": average_hsvs[most_similar_index],
                             "bounding_box": bounding_boxes[most_similar_index],
-                            "most_similar_image": cropped_images[most_similar_index]
+                            "most_similar_image": cropped_images[most_similar_index],
+                            "comparison_results": comparison_results,
+                            "leaf_hsv":leaf_hsv
                         }
                         logger.debug(f"Most similar object index: {most_similar_index}")
                         return Response(result_data, status=status.HTTP_200_OK)
 
                 return Response({
-                    "original_image": image_to_base64(image_rgb),  # Encode original image as base64
+                    "original_image": image_to_base64(image),  # Encode original image as base64
                     "green_objects_image": image_to_base64(result),  # Encode green objects image as base64
                     "cropped_images": cropped_images,
                     "average_hsvs": average_hsvs,
-                    "bounding_boxes": bounding_boxes
+                    "bounding_boxes": bounding_boxes,
+                    "comparison_results": comparison_results
                 }, status=status.HTTP_200_OK)
 
             except Exception as e:

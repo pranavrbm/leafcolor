@@ -2,9 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
-// import Contact from './pages/Contact';
-import Calibration from "./pages/Calibration";
-import Camera from "./pages/Camera";
+
 import Navbar from "./components/Navbar";
 
 const App = () => {

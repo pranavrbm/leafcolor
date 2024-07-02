@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 // import "./App.css";
 
-function Profile() {
+function App() {
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [processedData, setProcessedData] = useState(null);
 	const [selectedLeafIndex, setSelectedLeafIndex] = useState(null);
@@ -96,6 +96,43 @@ function Profile() {
 								)}
 							</div>
 						)}
+					{processedData.comparison_results &&
+						processedData.comparison_results.length > 0 && (
+							<div>
+								<h3>Comparison Results</h3>
+								<table>
+									<thead>
+										<tr>
+											<th>Index</th>
+											<th>Image</th>
+											<th>Similarity (%)</th>
+											<th>Average HSV</th>
+										</tr>
+									</thead>
+									<tbody>
+										{processedData.comparison_results.map(
+											(result, index) => (
+												<tr key={index}>
+													<td>{result.index}</td>
+													<td>
+														<img
+															src={`data:image/jpeg;base64,${result.image}`}
+															alt={`Object ${result.index}`}
+														/>
+													</td>
+													<td>{result.similarity}</td>
+													<td>
+														{result.average_hsv.join(
+															", "
+														)}
+													</td>
+												</tr>
+											)
+										)}
+									</tbody>
+								</table>
+							</div>
+						)}
 					{processedData.selected_leaf_index !== undefined && (
 						<div>
 							<h3>
@@ -109,6 +146,10 @@ function Profile() {
 							<h3>
 								Most Similar HSV:{" "}
 								{processedData.most_similar_hsv.join(", ")}
+							</h3>
+							<h3>
+								Selected leaf:{" "}
+								{processedData.leaf_hsv.join(", ")}
 							</h3>
 							<h3>
 								Bounding Box:{" "}
@@ -131,4 +172,4 @@ function Profile() {
 	);
 }
 
-export default Profile;
+export default App;
