@@ -187,15 +187,6 @@ function Profile() {
 					{processedData.selected_leaf_index !== undefined && (
 						<div>
 							<h3>
-								Selected Leaf Index:{" "}
-								{processedData.selected_leaf_index}
-							</h3>
-
-							<h3>
-								Selected Leaf Average RGB:{" "}
-								{processedData.most_similar_rgb.join(",  ")}
-							</h3>
-							<h3>
 								Most Similar Object Index:{" "}
 								{processedData.most_similar_index}
 							</h3>
@@ -203,10 +194,10 @@ function Profile() {
 								Most Similar RGB:{" "}
 								{processedData.most_similar_rgb.join(",  ")}
 							</h3>
-							<h3>
+							{/* <h3>
 								Bounding Box:{" "}
 								{processedData.bounding_box.join(",  ")}
-							</h3>
+							</h3> */}
 							{processedData.most_similar_image && (
 								<div>
 									<h3>Most Similar Object</h3>
@@ -216,6 +207,15 @@ function Profile() {
 									/>
 								</div>
 							)}
+							<h3>
+								Selected Leaf Index:{" "}
+								{processedData.selected_leaf_index}
+							</h3>
+
+							<h3>
+								Selected Leaf Average RGB:{" "}
+								{processedData.most_similar_rgb.join(",  ")}
+							</h3>
 							{processedData.selected_leaf && (
 								<div>
 									<h3>Selected leaf</h3>
