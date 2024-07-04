@@ -15,7 +15,10 @@ logger = logging.getLogger(__name__)
 def calculate_average_rgb(image, mask):
     masked_image = cv2.bitwise_and(image, image, mask=mask)
     average_rgb = cv2.mean(masked_image, mask=mask)[:3]
-    return list(average_rgb)  # Convert tuple to list
+    # Round average RGB values to 2 decimal places
+    average_rgb = [round(value, 2) for value in average_rgb]
+    return list(average_rgb)
+# Convert tuple to list
 
 def image_to_base64(image):
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
@@ -105,6 +108,7 @@ class ProcessImageView(APIView):
                     if most_similar_index != -1:
                         result_data = {
                             "selected_leaf_index": selected_leaf_index,
+                            "selected_leaf": cropped_images[selected_leaf_index],
                             "most_similar_index": most_similar_index,
                             "most_similar_rgb": average_rgbs[most_similar_index],
                             "bounding_box": bounding_boxes[most_similar_index],

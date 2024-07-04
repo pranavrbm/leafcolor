@@ -106,7 +106,7 @@ function Profile() {
 			{processedData && (
 				<div>
 					<h2>Processed Data</h2>
-					{processedData.original_image && (
+					{/* {processedData.original_image && (
 						<div>
 							<h3>Original Image</h3>
 							<img
@@ -114,7 +114,7 @@ function Profile() {
 								alt="Original"
 							/>
 						</div>
-					)}
+					)} */}
 					{processedData.green_objects_image && (
 						<div>
 							<h3>Green Objects Detection</h3>
@@ -137,9 +137,9 @@ function Profile() {
 												alt={`Object ${index}`}
 											/>
 											<button
-												onClick={() =>
-													handleSelectLeaf(index)
-												}>
+												onClick={() => {
+													handleSelectLeaf(index);
+												}}>
 												Select This Leaf
 											</button>
 										</div>
@@ -174,7 +174,7 @@ function Profile() {
 													<td>{result.similarity}</td>
 													<td>
 														{result.average_rgb.join(
-															", "
+															",  "
 														)}
 													</td>
 												</tr>
@@ -190,9 +190,10 @@ function Profile() {
 								Selected Leaf Index:{" "}
 								{processedData.selected_leaf_index}
 							</h3>
+
 							<h3>
 								Selected Leaf Average RGB:{" "}
-								{processedData.most_similar_rgb.join(", ")}
+								{processedData.most_similar_rgb.join(",  ")}
 							</h3>
 							<h3>
 								Most Similar Object Index:{" "}
@@ -200,11 +201,11 @@ function Profile() {
 							</h3>
 							<h3>
 								Most Similar RGB:{" "}
-								{processedData.most_similar_rgb.join(", ")}
+								{processedData.most_similar_rgb.join(",  ")}
 							</h3>
 							<h3>
 								Bounding Box:{" "}
-								{processedData.bounding_box.join(", ")}
+								{processedData.bounding_box.join(",  ")}
 							</h3>
 							{processedData.most_similar_image && (
 								<div>
@@ -212,6 +213,15 @@ function Profile() {
 									<img
 										src={`data:image/jpeg;base64,${processedData.most_similar_image}`}
 										alt="Most Similar Object"
+									/>
+								</div>
+							)}
+							{processedData.selected_leaf && (
+								<div>
+									<h3>Selected leaf</h3>
+									<img
+										src={`data:image/jpeg;base64,${processedData.selected_leaf}`}
+										alt="Selected leaf"
 									/>
 								</div>
 							)}
