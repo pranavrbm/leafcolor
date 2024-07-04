@@ -12,11 +12,10 @@ import base64
 
 logger = logging.getLogger(__name__)
 
-def calculate_average_hsv(image, mask):
-    hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    masked_hsv = cv2.bitwise_and(hsv_image, hsv_image, mask=mask)
-    average_hsv = cv2.mean(masked_hsv, mask=mask)[:3]
-    return list(average_hsv)  # Convert tuple to list
+def calculate_average_rgb(image, mask):
+    masked_image = cv2.bitwise_and(image, image, mask=mask)
+    average_rgb = cv2.mean(masked_image, mask=mask)[:3]
+    return list(average_rgb)  # Convert tuple to list
 
 def image_to_base64(image):
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
@@ -55,7 +54,7 @@ class ProcessImageView(APIView):
                 contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
                 cropped_images = []
-                average_hsvs = []
+                average_rgbs = []
                 aspect_ratios = []
                 bounding_boxes = []
 
@@ -74,26 +73,26 @@ class ProcessImageView(APIView):
                         if np.any(cropped_mask):
                             cropped_images.append(image_to_base64(cropped_result))  # Encode cropped image as base64
                             bounding_boxes.append((x, y, w, h))
-                            avg_hsv = calculate_average_hsv(image_rgb[y:y+h, x:x+w], cropped_mask)
-                            average_hsvs.append(avg_hsv)
+                            avg_rgb = calculate_average_rgb(image_rgb[y:y+h, x:x+w], cropped_mask)
+                            average_rgbs.append(avg_rgb)
 
                 logger.debug(f"Processed {len(cropped_images)} cropped images")
 
                 comparison_results = []
 
                 if selected_leaf_index is not None and 0 <= selected_leaf_index < len(cropped_images):
-                    leaf_hsv = average_hsvs[selected_leaf_index]
+                    leaf_rgb = average_rgbs[selected_leaf_index]
                     min_distance = float('inf')
                     most_similar_index = -1
 
-                    for i, avg_hsv in enumerate(average_hsvs):
+                    for i, avg_rgb in enumerate(average_rgbs):
                         if i != selected_leaf_index:
-                            distance = euclidean(leaf_hsv, avg_hsv)
-                            similarity = 100 - (distance / np.sqrt(sum([x**2 for x in leaf_hsv])) * 100)
+                            distance = euclidean(leaf_rgb, avg_rgb)
+                            similarity = 100 - (distance / np.sqrt(sum([x**2 for x in leaf_rgb])) * 100)
                             comparison_results.append({
                                 "index": i,
                                 "similarity": round(similarity, 2),
-                                "average_hsv": avg_hsv,
+                                "average_rgb": avg_rgb,
                                 "bounding_box": bounding_boxes[i],
                                 "image": cropped_images[i]
                             })
@@ -107,11 +106,11 @@ class ProcessImageView(APIView):
                         result_data = {
                             "selected_leaf_index": selected_leaf_index,
                             "most_similar_index": most_similar_index,
-                            "most_similar_hsv": average_hsvs[most_similar_index],
+                            "most_similar_rgb": average_rgbs[most_similar_index],
                             "bounding_box": bounding_boxes[most_similar_index],
                             "most_similar_image": cropped_images[most_similar_index],
                             "comparison_results": comparison_results,
-                            "leaf_hsv":leaf_hsv
+                            "leaf_rgb": leaf_rgb
                         }
                         logger.debug(f"Most similar object index: {most_similar_index}")
                         return Response(result_data, status=status.HTTP_200_OK)
@@ -120,7 +119,7 @@ class ProcessImageView(APIView):
                     "original_image": image_to_base64(image),  # Encode original image as base64
                     "green_objects_image": image_to_base64(result),  # Encode green objects image as base64
                     "cropped_images": cropped_images,
-                    "average_hsvs": average_hsvs,
+                    "average_rgbs": average_rgbs,
                     "bounding_boxes": bounding_boxes,
                     "comparison_results": comparison_results
                 }, status=status.HTTP_200_OK)

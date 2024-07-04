@@ -1,28 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
-// import "./App.css";
+import Webcam from "react-webcam";
 
-function App() {
+function Profile() {
 	const [selectedFile, setSelectedFile] = useState(null);
+	const [capturedImage, setCapturedImage] = useState(null);
 	const [processedData, setProcessedData] = useState(null);
 	const [selectedLeafIndex, setSelectedLeafIndex] = useState(null);
+	const [useWebcam, setUseWebcam] = useState(false);
+	const webcamRef = useRef(null);
 
 	const handleFileChange = (event) => {
 		setSelectedFile(event.target.files[0]);
+		setCapturedImage(null);
 	};
 
 	const handleUpload = () => {
-		const formData = new FormData();
-		formData.append("image", selectedFile);
+		if (selectedFile) {
+			const formData = new FormData();
+			formData.append("image", selectedFile);
 
-		axios
-			.post("http://localhost:8000/api/process_image/", formData)
-			.then((response) => {
-				setProcessedData(response.data);
-			})
-			.catch((error) => {
-				console.error("There was an error uploading the image!", error);
-			});
+			axios
+				.post("http://localhost:8000/api/process_image/", formData)
+				.then((response) => {
+					setProcessedData(response.data);
+				})
+				.catch((error) => {
+					console.error(
+						"There was an error uploading the image!",
+						error
+					);
+				});
+		}
+	};
+
+	const handleCapture = () => {
+		const imageSrc = webcamRef.current.getScreenshot();
+		if (imageSrc) {
+			fetch(imageSrc)
+				.then((res) => res.blob())
+				.then((blob) => {
+					const file = new File([blob], "captured.jpg", {
+						type: "image/jpeg",
+					});
+					setSelectedFile(file);
+					setCapturedImage(imageSrc);
+				});
+		}
 	};
 
 	const handleSelectLeaf = (index) => {
@@ -47,10 +71,37 @@ function App() {
 	return (
 		<div className="App">
 			<h1>Image Processing PWA</h1>
-			<input
-				type="file"
-				onChange={handleFileChange}
-			/>
+			<button onClick={() => setUseWebcam(!useWebcam)}>
+				{useWebcam ? "Switch to File Upload" : "Switch to Webcam"}
+			</button>
+			{useWebcam ? (
+				<div>
+					<Webcam
+						audio={false}
+						ref={webcamRef}
+						screenshotFormat="image/jpeg"
+						width={320}
+						height={240}
+					/>
+					<button onClick={handleCapture}>Capture Photo</button>
+					{capturedImage && (
+						<div>
+							<h3>Captured Image</h3>
+							<img
+								src={capturedImage}
+								alt="Captured"
+							/>
+						</div>
+					)}
+				</div>
+			) : (
+				<div>
+					<input
+						type="file"
+						onChange={handleFileChange}
+					/>
+				</div>
+			)}
 			<button onClick={handleUpload}>Upload</button>
 			{processedData && (
 				<div>
@@ -106,7 +157,7 @@ function App() {
 											<th>Index</th>
 											<th>Image</th>
 											<th>Similarity (%)</th>
-											<th>Average HSV</th>
+											<th>Average RGB</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -122,7 +173,7 @@ function App() {
 													</td>
 													<td>{result.similarity}</td>
 													<td>
-														{result.average_hsv.join(
+														{result.average_rgb.join(
 															", "
 														)}
 													</td>
@@ -140,16 +191,16 @@ function App() {
 								{processedData.selected_leaf_index}
 							</h3>
 							<h3>
+								Selected Leaf Average RGB:{" "}
+								{processedData.most_similar_rgb.join(", ")}
+							</h3>
+							<h3>
 								Most Similar Object Index:{" "}
 								{processedData.most_similar_index}
 							</h3>
 							<h3>
-								Most Similar HSV:{" "}
-								{processedData.most_similar_hsv.join(", ")}
-							</h3>
-							<h3>
-								Selected leaf:{" "}
-								{processedData.leaf_hsv.join(", ")}
+								Most Similar RGB:{" "}
+								{processedData.most_similar_rgb.join(", ")}
 							</h3>
 							<h3>
 								Bounding Box:{" "}
@@ -172,4 +223,4 @@ function App() {
 	);
 }
 
-export default App;
+export default Profile;
