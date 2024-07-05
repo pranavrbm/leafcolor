@@ -6,6 +6,8 @@ from rest_framework import status
 import cv2
 import numpy as np
 from PIL import Image
+import base64
+from io import BytesIO
 
 class LeafImageUploadView(APIView):
     parser_classes = [MultiPartParser, FormParser]
@@ -58,15 +60,15 @@ class LeafImageUploadView(APIView):
         image = Image.open(image)
         image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         leaf_mask = self.segment_color(image, (30, 40, 35), (85, 255, 255))
-        black_mask = self.segment_color(image, (0, 0, 0), (180, 255, 30))
-        white_mask = self.segment_color(image, (0, 0, 200), (180, 25, 255))
-        avg_black = self.calculate_average_color(image, black_mask)
-        avg_white = self.calculate_average_color(image, white_mask)
         leaf_region = cv2.bitwise_and(image, image, mask=leaf_mask)
-        normalized_leaf = self.normalize_leaf_color(leaf_region, avg_black, avg_white)
-        avg_leaf_color = self.calculate_leaf_rgb(normalized_leaf)
+        avg_leaf_color = self.calculate_leaf_rgb(leaf_region)
+
+        # Encode the detected green object image to base64
+        _, buffer = cv2.imencode('.jpg', leaf_region)
+        green_object_image = base64.b64encode(buffer).decode('utf-8')
+
         category = self.categorize_rgb(avg_leaf_color)
-        return {"actual_rgb_value": avg_leaf_color.tolist(), "category": category}
+        return {"actual_rgb_value": avg_leaf_color.tolist(), "category": category, "green_object_image": green_object_image}
 
     def post(self, request, *args, **kwargs):
         if 'image' not in request.data:

@@ -1,69 +1,112 @@
-// import React from "react";
-// import { Link } from "react-router-dom";
-// import "../styles/Home.css";
-
-// const Home = () => {
-// 	return (
-// 		<>
-// 			<Link to="/Base">
-// 				<h1>Base model</h1>
-// 			</Link>
-// 		</>
-
-// 		// <a href="/Calibration">calibration</a>
-// 	);
-// };
-
-// export default Home;
-
-// src/App.js
-import React, { useState } from "react";
+// src/Profile.js
+import React, { useState, useRef } from "react";
 import axios from "axios";
+import Webcam from "react-webcam";
 
 function Home() {
 	const [selectedFile, setSelectedFile] = useState(null);
-	const [result, setResult] = useState(null);
+	const [capturedImage, setCapturedImage] = useState(null);
+	const [processedData, setProcessedData] = useState(null);
+	const [useWebcam, setUseWebcam] = useState(false);
+	const webcamRef = useRef(null);
 
 	const handleFileChange = (event) => {
 		setSelectedFile(event.target.files[0]);
+		setCapturedImage(null);
+		setProcessedData(null);
 	};
 
-	const handleSubmit = async (event) => {
-		event.preventDefault();
-		const formData = new FormData();
-		formData.append("image", selectedFile);
+	const handleUpload = () => {
+		if (selectedFile) {
+			const formData = new FormData();
+			formData.append("image", selectedFile);
 
-		try {
-			const response = await axios.post(
-				"http://localhost:8000/Home/upload/",
-				formData,
-				{
-					headers: {
-						"Content-Type": "multipart/form-data",
-					},
-				}
-			);
-			setResult(response.data);
-		} catch (error) {
-			console.error("Error uploading file:", error);
+			axios
+				.post("http://localhost:8000/Home/upload/", formData)
+				.then((response) => {
+					setProcessedData(response.data);
+				})
+				.catch((error) => {
+					console.error(
+						"There was an error uploading the image!",
+						error
+					);
+				});
+		}
+	};
+
+	const handleCapture = () => {
+		const imageSrc = webcamRef.current.getScreenshot();
+		if (imageSrc) {
+			fetch(imageSrc)
+				.then((res) => res.blob())
+				.then((blob) => {
+					const file = new File([blob], "captured.jpg", {
+						type: "image/jpeg",
+					});
+					setSelectedFile(file);
+					setCapturedImage(imageSrc);
+					setUseWebcam(false); // Close the camera after capturing
+					setProcessedData(null);
+				});
 		}
 	};
 
 	return (
 		<div className="App">
-			<h1>Leaf Image Upload</h1>
-			<form onSubmit={handleSubmit}>
-				<input
-					type="file"
-					onChange={handleFileChange}
-				/>
-				<button type="submit">Upload</button>
-			</form>
-			{result && (
+			<h1>Image Processing PWA</h1>
+			<button onClick={() => setUseWebcam(!useWebcam)}>
+				{useWebcam ? "Switch to File Upload" : "Switch to Webcam"}
+			</button>
+			{useWebcam ? (
 				<div>
-					<h2>Result</h2>
-					<p>Actual RGB Value: {result.actual_rgb_value}</p>
-					<p>Category: {result.category}</p>
+					<Webcam
+						audio={false}
+						ref={webcamRef}
+						screenshotFormat="image/jpeg"
+						width={320}
+						height={240}
+					/>
+					<button onClick={handleCapture}>Capture Photo</button>
+				</div>
+			) : (
+				<div>
+					<input
+						type="file"
+						onChange={handleFileChange}
+					/>
+				</div>
+			)}
+			<button onClick={handleUpload}>Upload</button>
+			{capturedImage && (
+				<div>
+					<h3>Captured Image</h3>
+					<img
+						src={capturedImage}
+						alt="Captured"
+					/>
+				</div>
+			)}
+			{processedData && (
+				<div>
+					<h2>Processed Data</h2>
+					{processedData.green_object_image && (
+						<div>
+							<h3>Green Object Detection</h3>
+							<img
+								src={`data:image/jpeg;base64,${processedData.green_object_image}`}
+								alt="Green Object"
+							/>
+						</div>
+					)}
+					<div>
+						<h3>RGB Category</h3>
+						<p>
+							Actual RGB Value:{" "}
+							{processedData.actual_rgb_value.join(", ")}
+						</p>
+						<p>Category: {processedData.category}</p>
+					</div>
 				</div>
 			)}
 		</div>
