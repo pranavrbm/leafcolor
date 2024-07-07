@@ -70,7 +70,7 @@ function Profile() {
 
 	return (
 		<div className="App">
-			<h1>Image Processing PWA</h1>
+			<h1>Color detection using white and black background</h1>
 			<button onClick={() => setUseWebcam(!useWebcam)}>
 				{useWebcam ? "Switch to File Upload" : "Switch to Webcam"}
 			</button>
