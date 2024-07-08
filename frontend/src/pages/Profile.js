@@ -13,6 +13,7 @@ function Profile() {
 	const handleFileChange = (event) => {
 		setSelectedFile(event.target.files[0]);
 		setCapturedImage(null);
+		setProcessedData(null);
 	};
 
 	const handleUpload = () => {
@@ -45,6 +46,8 @@ function Profile() {
 					});
 					setSelectedFile(file);
 					setCapturedImage(imageSrc);
+					setUseWebcam(false); // Close the camera after capturing
+					setProcessedData(null);
 				});
 		}
 	};
@@ -84,15 +87,6 @@ function Profile() {
 						height={240}
 					/>
 					<button onClick={handleCapture}>Capture Photo</button>
-					{capturedImage && (
-						<div>
-							<h3>Captured Image</h3>
-							<img
-								src={capturedImage}
-								alt="Captured"
-							/>
-						</div>
-					)}
 				</div>
 			) : (
 				<div>
@@ -102,7 +96,17 @@ function Profile() {
 					/>
 				</div>
 			)}
+			{capturedImage && (
+				<div>
+					<h3>Captured Image</h3>
+					<img
+						src={capturedImage}
+						alt="Captured"
+					/>
+				</div>
+			)}
 			<button onClick={handleUpload}>Upload</button>
+
 			{processedData && (
 				<div>
 					<h2>Processed Data</h2>

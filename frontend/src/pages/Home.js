@@ -77,7 +77,7 @@ function Home() {
 					/>
 				</div>
 			)}
-			<button onClick={handleUpload}>Upload</button>
+
 			{capturedImage && (
 				<div>
 					<h3>Captured Image</h3>
@@ -87,6 +87,7 @@ function Home() {
 					/>
 				</div>
 			)}
+			<button onClick={handleUpload}>Upload</button>
 			{processedData && (
 				<div>
 					<h2>Processed Data</h2>
