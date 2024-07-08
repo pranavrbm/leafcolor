@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import Webcam from "react-webcam";
+import "../styles/Profile.css"; // Make sure to import the CSS file
 
 function Profile() {
 	const [selectedFile, setSelectedFile] = useState(null);
@@ -46,7 +47,7 @@ function Profile() {
 					});
 					setSelectedFile(file);
 					setCapturedImage(imageSrc);
-					setUseWebcam(false); // Close the camera after capturing
+					setUseWebcam(false);
 					setProcessedData(null);
 				});
 		}
@@ -77,8 +78,9 @@ function Profile() {
 			<button onClick={() => setUseWebcam(!useWebcam)}>
 				{useWebcam ? "Switch to File Upload" : "Switch to Webcam"}
 			</button>
+			<h5>OR</h5>
 			{useWebcam ? (
-				<div>
+				<div className="webcam-container">
 					<Webcam
 						audio={false}
 						ref={webcamRef}
@@ -89,7 +91,7 @@ function Profile() {
 					<button onClick={handleCapture}>Capture Photo</button>
 				</div>
 			) : (
-				<div>
+				<div className="file-upload-container">
 					<input
 						type="file"
 						onChange={handleFileChange}
@@ -97,7 +99,7 @@ function Profile() {
 				</div>
 			)}
 			{capturedImage && (
-				<div>
+				<div className="captured-image">
 					<h3>Captured Image</h3>
 					<img
 						src={capturedImage}
@@ -108,17 +110,8 @@ function Profile() {
 			<button onClick={handleUpload}>Upload</button>
 
 			{processedData && (
-				<div>
+				<div className="processed-data">
 					<h2>Processed Data</h2>
-					{/* {processedData.original_image && (
-						<div>
-							<h3>Original Image</h3>
-							<img
-								src={`data:image/jpeg;base64,${processedData.original_image}`}
-								alt="Original"
-							/>
-						</div>
-					)} */}
 					{processedData.green_objects_image && (
 						<div>
 							<h3>Green Objects Detection</h3>
@@ -130,7 +123,7 @@ function Profile() {
 					)}
 					{processedData.cropped_images &&
 						processedData.cropped_images.length > 0 && (
-							<div>
+							<div className="cropped-images">
 								<h3>Cropped Images</h3>
 								{processedData.cropped_images.map(
 									(image, index) => (
@@ -141,9 +134,9 @@ function Profile() {
 												alt={`Object ${index}`}
 											/>
 											<button
-												onClick={() => {
-													handleSelectLeaf(index);
-												}}>
+												onClick={() =>
+													handleSelectLeaf(index)
+												}>
 												Select This Leaf
 											</button>
 										</div>
@@ -153,7 +146,7 @@ function Profile() {
 						)}
 					{processedData.comparison_results &&
 						processedData.comparison_results.length > 0 && (
-							<div>
+							<div className="comparison-results">
 								<h3>Comparison Results</h3>
 								<table>
 									<thead>
@@ -178,7 +171,7 @@ function Profile() {
 													<td>{result.similarity}</td>
 													<td>
 														{result.average_rgb.join(
-															",  "
+															", "
 														)}
 													</td>
 												</tr>
@@ -196,12 +189,8 @@ function Profile() {
 							</h3>
 							<h3>
 								Most Similar RGB:{" "}
-								{processedData.most_similar_rgb.join(",  ")}
+								{processedData.most_similar_rgb.join(", ")}
 							</h3>
-							{/* <h3>
-								Bounding Box:{" "}
-								{processedData.bounding_box.join(",  ")}
-							</h3> */}
 							{processedData.most_similar_image && (
 								<div>
 									<h3>Most Similar Object</h3>
@@ -215,17 +204,16 @@ function Profile() {
 								Selected Leaf Index:{" "}
 								{processedData.selected_leaf_index}
 							</h3>
-
 							<h3>
 								Selected Leaf Average RGB:{" "}
-								{processedData.leaf_rgb.join(",  ")}
+								{processedData.leaf_rgb.join(", ")}
 							</h3>
 							{processedData.selected_leaf && (
 								<div>
-									<h3>Selected leaf</h3>
+									<h3>Selected Leaf</h3>
 									<img
 										src={`data:image/jpeg;base64,${processedData.selected_leaf}`}
-										alt="Selected leaf"
+										alt="Selected Leaf"
 									/>
 								</div>
 							)}

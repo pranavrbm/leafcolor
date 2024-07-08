@@ -2,6 +2,7 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import Webcam from "react-webcam";
+import "../styles/Home.css"; // Make sure to import the CSS file
 
 function Home() {
 	const [selectedFile, setSelectedFile] = useState(null);
@@ -46,7 +47,7 @@ function Home() {
 					});
 					setSelectedFile(file);
 					setCapturedImage(imageSrc);
-					setUseWebcam(false); // Close the camera after capturing
+					setUseWebcam(false);
 					setProcessedData(null);
 				});
 		}
@@ -58,8 +59,9 @@ function Home() {
 			<button onClick={() => setUseWebcam(!useWebcam)}>
 				{useWebcam ? "Switch to File Upload" : "Switch to Webcam"}
 			</button>
+			<h5>OR</h5>
 			{useWebcam ? (
-				<div>
+				<div className="webcam-container">
 					<Webcam
 						audio={false}
 						ref={webcamRef}
@@ -70,7 +72,7 @@ function Home() {
 					<button onClick={handleCapture}>Capture Photo</button>
 				</div>
 			) : (
-				<div>
+				<div className="file-upload-container">
 					<input
 						type="file"
 						onChange={handleFileChange}
@@ -79,7 +81,7 @@ function Home() {
 			)}
 
 			{capturedImage && (
-				<div>
+				<div className="captured-image">
 					<h3>Captured Image</h3>
 					<img
 						src={capturedImage}
@@ -89,7 +91,7 @@ function Home() {
 			)}
 			<button onClick={handleUpload}>Upload</button>
 			{processedData && (
-				<div>
+				<div className="processed-data">
 					<h2>Processed Data</h2>
 					{processedData.green_object_image && (
 						<div>

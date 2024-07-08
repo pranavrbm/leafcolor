@@ -1,4 +1,4 @@
-/* Add this to your CSS file, e.g., src/App.css */
+/* Add this to your CSS file */
 
 body {
 	font-family: Arial, sans-serif;
@@ -27,12 +27,15 @@ img {
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
 	margin: 20px 0 10px;
 }
 
 .captured-image,
-.processed-data {
+.processed-data,
+.cropped-images,
+.comparison-results {
 	margin: 20px 0;
 }
 
