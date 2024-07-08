@@ -54,7 +54,7 @@ function Home() {
 
 	return (
 		<div className="App">
-			<h1>Color detection using chat as reference</h1>
+			<h1>Color detection using W&B background as reference</h1>
 			<button onClick={() => setUseWebcam(!useWebcam)}>
 				{useWebcam ? "Switch to File Upload" : "Switch to Webcam"}
 			</button>

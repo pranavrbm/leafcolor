@@ -70,7 +70,7 @@ function Profile() {
 
 	return (
 		<div className="App">
-			<h1>Color detection using white and black background</h1>
+			<h1>Color detection using chart as reference</h1>
 			<button onClick={() => setUseWebcam(!useWebcam)}>
 				{useWebcam ? "Switch to File Upload" : "Switch to Webcam"}
 			</button>
@@ -214,7 +214,7 @@ function Profile() {
 
 							<h3>
 								Selected Leaf Average RGB:{" "}
-								{processedData.most_similar_rgb.join(",  ")}
+								{processedData.leaf_rgb.join(",  ")}
 							</h3>
 							{processedData.selected_leaf && (
 								<div>
