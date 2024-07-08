@@ -8,6 +8,7 @@ import numpy as np
 from PIL import Image
 import base64
 from io import BytesIO
+from .models import LeafImageResult
 
 class LeafImageUploadView(APIView):
     parser_classes = [MultiPartParser, FormParser]
@@ -76,4 +77,12 @@ class LeafImageUploadView(APIView):
         
         image = request.data['image']
         result = self.process_leaf_image(image)
+
+        # Save result to database
+        LeafImageResult.objects.create(
+            actual_rgb_value=result['actual_rgb_value'],
+            category=result['category'],
+            green_object_image=result['green_object_image']
+        )
+
         return Response(result)
