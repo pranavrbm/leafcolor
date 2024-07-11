@@ -71,12 +71,12 @@ class LeafImageUploadView(APIView):
         image = Image.open(image)
         image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         
-        # Segment the leaf
-        leaf_mask = self.segment_color(image, (30, 40, 35), (85, 255, 255))
+        # Segment the leaf more accurately
+        leaf_mask = self.segment_color(image, (25, 40, 35), (90, 255, 255))  # Adjusted bounds
         
         # Segment the black and white regions
-        black_mask = self.segment_color(image, (0, 0, 0), (180, 255, 100))
-        white_mask = self.segment_color(image, (0, 0, 100), (255, 255, 255))
+        black_mask = self.segment_color(image, (0, 0, 0), (180, 255, 50))  # Adjusted bounds for black
+        white_mask = self.segment_color(image, (0, 0, 150), (255, 255, 255))  # Adjusted bounds for white
         
         # Calculate background colors
         avg_black = self.calculate_average_color(image, black_mask)
@@ -98,6 +98,7 @@ class LeafImageUploadView(APIView):
 
         return {"actual_rgb_value": avg_leaf_color.tolist(), "category": category, "green_object_image": green_object_image}
 
+        
     def post(self, request, *args, **kwargs):
         if 'image' not in request.data:
             return Response({"error": "No image provided"}, status=status.HTTP_400_BAD_REQUEST)
