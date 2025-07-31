@@ -134,5 +134,3 @@ Currently, this project does not specify a license. Please contact the project o
 [pranavrbm](https://github.com/pranavrbm)
 
 ---
-
-*If you have forgotten what this project does: LeafColor helps you upload images of leaves, segments them, analyzes their color, and compares them to reference charts to automate and visualize leaf color classification and assessment.*
