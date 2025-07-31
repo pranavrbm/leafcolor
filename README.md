@@ -54,16 +54,72 @@ LeafColor combines Python (with OpenCV and Pillow for image processing), a web f
 - `frontend/src/pages/Profile.js`: Handles frontend logic for image upload, displaying processed results, and user interactions.
 - `venv/Lib/site-packages/`: Contains scientific libraries for color and clustering analysis (used in backend).
 
-## Usage
+## How to Run the Project
 
-To use LeafColor:
+### Prerequisites
 
-1. Clone the repository:  
-   `git clone https://github.com/pranavrbm/leafcolor.git`
-2. Install dependencies (Python, JS, etc.).
-3. Start the backend server (Django/REST).
-4. Start the frontend (React).
-5. Access the web app, upload images, and explore leaf color analysis.
+- Python 3.8+ installed
+- Node.js and npm installed (for frontend)
+- (Recommended) Use a virtual environment for Python
+
+### Backend Setup (Django + API)
+
+1. **Clone the repository:**
+    ```bash
+    git clone https://github.com/pranavrbm/leafcolor.git
+    cd leafcolor
+    ```
+
+2. **Create and activate a Python virtual environment:**
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
+
+3. **Install backend dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. **Run migrations (if using Django ORM):**
+    ```bash
+    python manage.py migrate
+    ```
+
+5. **Start the backend server:**
+    ```bash
+    python manage.py runserver
+    ```
+    By default, the backend runs on `http://localhost:8000/`.
+
+### Frontend Setup (React)
+
+1. **Navigate to the frontend directory:**
+    ```bash
+    cd frontend
+    ```
+
+2. **Install frontend dependencies:**
+    ```bash
+    npm install
+    ```
+
+3. **Start the frontend development server:**
+    ```bash
+    npm start
+    ```
+    By default, the frontend runs on `http://localhost:3000/`.
+
+### Using the App
+
+- Open [http://localhost:3000/](http://localhost:3000/) in your browser.
+- Upload a leaf image, select a leaf, and view color analysis results.
+
+### Notes
+
+- The backend must be running for the frontend to communicate with the API.
+- You may need to configure CORS in the backend for local development.
+- Make sure all dependencies are installed as required in `requirements.txt` and `package.json`.
 
 ## Why LeafColor?
 
